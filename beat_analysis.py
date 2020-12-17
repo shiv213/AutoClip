@@ -11,24 +11,7 @@ def get_onsets(filename, win_s=512):
     hop_s = win_s // 2  # hop size
     timestamps = []
 
-    def smoothListGaussian(list, strippedXs=False, degree=20):
-        window = degree * 2 - 1
-        weight = np.array([1.0] * window)
-        weightGauss = []
-        for i in range(window):
-            i = i - degree + 1
-            frac = i / float(window)
-            gauss = 1 / (np.exp((4 * (frac)) ** 2))
-            weightGauss.append(gauss)
-        weight = np.array(weightGauss) * weight
-        smoothed = [0.0] * (len(list) - window)
-        for i in range(len(smoothed)):
-            smoothed[i] = sum(np.array(list[i:i + window]) * weight) / sum(weight)
-        return smoothed
-
     samplerate = 0
-    if len(sys.argv) > 2:
-        samplerate = int(sys.argv[2])
 
     s = source(filename, samplerate, hop_s)
     samplerate = s.samplerate
@@ -66,7 +49,8 @@ def get_onsets(filename, win_s=512):
     plt.show()
     # smoothed = smoothListGaussian(desc)
     npsmoothed = np.array(desc)  # convert your 1-D array to a numpy array if it's not, otherwise omit this line
-    peak_indices = signal.find_peaks(npsmoothed, prominence=max(desc)*.8)[0]
+    peak_indices = signal.find_peaks(npsmoothed, prominence=max(desc)*.75)[0]
+    # peak_indices = signal.find_peaks(npsmoothed, prominence=8000)[0]
     plt.plot(peak_indices)
     plt.show()
     plt.plot(desc)

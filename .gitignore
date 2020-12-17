@@ -1,3 +1,10 @@
+# temp vids
+output/
+*.mp4
+*.mov
+clips/
+music/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
