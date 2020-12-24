@@ -1,14 +1,19 @@
 from moviepy.editor import *
-from beat_analysis import get_onsets
+# from beat_analysis import get_onsets
 from video_analysis import make_cuts
 import glob
+from beat_tracker import beat_track
 
-input_audio = "music/depressed.wav"
+input_audio = "music/japan88.wav"
 audio = AudioFileClip(input_audio)
-timestamps = get_onsets(input_audio)
-# timestamps.append(timestamps[-1] + 2)
-print(timestamps)
+beats = beat_track(input_audio)
+timestamps = []
 
+for x in range(len(beats)):
+    if x % 2 == 0:
+        timestamps.append(beats[x])
+
+print(timestamps)
 
 videos_dir = "clips/identical/"
 # videos_dir = "output/"

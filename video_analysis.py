@@ -81,7 +81,8 @@ def make_cuts(filename, output_path, buff_size=64):
         kcw.finish()
     return output_vids
 
-# print(make_cuts("clips/test2.mov"))
+
+print(make_cuts("clips/test2.mov", "output"))
 # print(make_cuts("clips/test_cascade.mov"))
 
 # TODO clip.duration -- (frames/total_frames)*duration

@@ -1,20 +1,35 @@
 from moviepy.editor import *
+# from demo_pitch import get_onsets
 from beat_analysis import get_onsets
+from beat_tracker import beat_track
 
-input_audio = "music/wave.wav"
+input_audio = "music/japan88.wav"
 audio = AudioFileClip(input_audio)
-timestamps = get_onsets(input_audio)
+beats = beat_track(input_audio)
+timestamps = []
+
+for x in range(len(beats)):
+    if x % 2 == 0:
+        timestamps.append(beats[x])
+
 # timestamps.append(timestamps[-1] + 2)
 print(timestamps)
 
 # TODO add beat tester (using white pulses on black background)
 total = []
+
 i = 0
+# while i < len(timestamps) - 2:
+#     total.append(ColorClip((100, 50), (0, 0, 0), duration=timestamps[i + 1] - timestamps[i] - 0.1))
+#     total.append(ColorClip((100, 50), (255, 255, 255), duration=0.1))
+#     i += 1
+
+# wrong one (switching from one to other)
 while i < len(timestamps) - 2:
     if (i % 2) == 0:
         total.append(ColorClip((100, 50), (0, 0, 0), duration=timestamps[i + 1] - timestamps[i]))
     else:
-        total.append(ColorClip((100, 50), (255, 255, 255), duration=timestamps[i + 1] - timestamps[i]))
+        total.append(ColorClip((100, 50), (255, 255, 255), duration=timestamps[i + 1] - timestamps[i]))  #
     i += 1
 
 output_clip = concatenate_videoclips(total).set_audio(audio)

@@ -2,8 +2,8 @@ from os import path
 from pydub import AudioSegment
 
 # files
-src = "japan88.mp3"
-dst = "japan88.wav"
+src = "full_depressed.mp3"
+dst = "full_depressed.wav"
 
 # convert wav to mp3
 sound = AudioSegment.from_mp3(src)
