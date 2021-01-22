@@ -1,36 +1,30 @@
 from moviepy.editor import *
 # from demo_pitch import get_onsets
-from beat_analysis import get_onsets
-from beat_tracker import beat_track
+# from beat_analysis import get_onsets
+from librosa_beat_track import beat_track
+import matplotlib.pyplot as plt
 
-input_audio = "music/japan88.wav"
+input_audio = "music/robbery.mp3"
 audio = AudioFileClip(input_audio)
-beats = beat_track(input_audio)
-timestamps = []
+beats, onset_env = beat_track(input_audio, plot=True)
+clips = []
 
-for x in range(len(beats)):
-    if x % 2 == 0:
-        timestamps.append(beats[x])
-
-# timestamps.append(timestamps[-1] + 2)
-print(timestamps)
-
-# TODO add beat tester (using white pulses on black background)
-total = []
+# timestamps = []
+# for x in range(len(beats)):
+#     if x % 2 == 0:
+#         timestamps.append(beats[x])
+#
+# print(timestamps)
 
 i = 0
-# while i < len(timestamps) - 2:
-#     total.append(ColorClip((100, 50), (0, 0, 0), duration=timestamps[i + 1] - timestamps[i] - 0.1))
-#     total.append(ColorClip((100, 50), (255, 255, 255), duration=0.1))
-#     i += 1
 
-# wrong one (switching from one to other)
-while i < len(timestamps) - 2:
+# switching from one to other
+while i < len(beats) - 1:
     if (i % 2) == 0:
-        total.append(ColorClip((100, 50), (0, 0, 0), duration=timestamps[i + 1] - timestamps[i]))
+        clips.append(ColorClip((100, 50), (0, 0, 0), duration=beats[i + 1] - beats[i]))
     else:
-        total.append(ColorClip((100, 50), (255, 255, 255), duration=timestamps[i + 1] - timestamps[i]))  #
+        clips.append(ColorClip((100, 50), (255, 255, 255), duration=beats[i + 1] - beats[i]))
     i += 1
 
-output_clip = concatenate_videoclips(total).set_audio(audio)
-output_clip.write_videofile("beat_test.mp4", fps=30)
+# output_clip = concatenate_videoclips(clips).set_audio(audio)
+# output_clip.write_videofile("beat_test.mp4", fps=30)
