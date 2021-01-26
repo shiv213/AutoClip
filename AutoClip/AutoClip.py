@@ -125,11 +125,9 @@ def fit_video(videos: List[str], beats: List[float], onsets: List[numpy.float64]
 
     print("Total Clips: ", len(original_clips))
     widgets = [
-        'Calculating best order of clips: ', progressbar.Timer()
+        'Calculating best order of clips: ', progressbar.Timer(), '\n'
     ]
-
     bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength, widgets=widgets)
-
     for permutation in permutation_generator(rounded_beats, maximum_perms):
         order = list(permutation)
         total_weight = 0
@@ -142,7 +140,6 @@ def fit_video(videos: List[str], beats: List[float], onsets: List[numpy.float64]
             best_order = order
         bar.update()
 
-    print("\n")
     print("Original order: ", rounded_beats)
     print("Best order: ", best_order)
 

@@ -7,3 +7,6 @@ aubio~=0.4.9
 scipy~=1.6.0
 PyAudio~=0.2.11
 setuptools~=52.0.0
+opencv-python~=4.5.1.48
+imutils~=0.5.4
+pytesseract~=0.3.7

@@ -24,52 +24,56 @@ def make_cuts(filename, output_path, buff_size=64):
     vid = cv2.VideoCapture(filename)
     is_empty = True
     frame_count = 0
+
     while vid.isOpened():
         ret, image = vid.read()
         if image is None:
             break
-
-        small = imutils.resize(image, width=min(400, image.shape[1]))
+        height = 720
+        width = 1280
+        small = cv2.resize(image, (width, height))
         (rects, weights) = hog.detectMultiScale(small, winStride=(4, 4),
                                                 padding=(8, 8), scale=1.05)
 
         # Kill feed OCR
-        kfeed = cv2.rectangle(small, (290, 18), (399, 40), (255, 255, 0))
+        # kfeed = cv2.rectangle(small, (int(width*0.725), int(height*0.08)), (int(width*0.9975), int(height*0.177777778)), (255, 255, 0))
+        # roi = (849, 58, 424, 265)
+        roi = (976, 70, 85, 17)
+        kfeed = small[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+
+        gray = cv2.bitwise_not(cv2.cvtColor(kfeed, cv2.COLOR_BGR2GRAY))
+        # kfeed_roi = kfeed[int(width*0.725):int(width*0.9975), int(height*0.08):int(height*0.177777778)]
         # gray = cv2.cvtColor(kfeed, cv2.COLOR_BGR2GRAY)
-        # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-        # rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
-        # dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
-        # contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        #
-        # text = pytesseract.image_to_string(gray)
-        # print(text)
+        cv2.imshow("kfeed", gray)
+        text = pytesseract.image_to_string(gray)
+        print(text)
 
         # recording condition
-        if len(rects) > 0:
-            update_consec_frames = False
-            consec_frames = 0
+        # if len(rects) > 0:
+        #     update_consec_frames = False
+        #     consec_frames = 0
+        #
+        #     # draw rectangles (on small)
+        #     for (x, y, w, h) in rects:
+        #         cv2.rectangle(small, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        #
+        #     if not kcw.recording:
+        #         timestamp = datetime.datetime.now()
+        #         p = "{}/{}.mp4".format(output_path,
+        #                                timestamp.strftime("%Y%m%d-%H%M%S"))
+        #         # kcw.start(p, cv2.VideoWriter_fourcc(*'MJPG'), 30)
+        #         kcw.start(p, cv2.VideoWriter_fourcc(*'mp4v'), 30)
+        #         output_vids.append(p)
+        # else:
+        #     update_consec_frames = True
+        #
+        # if update_consec_frames:
+        #     consec_frames += 1
+        # kcw.update(image)
+        # if kcw.recording and consec_frames == buff_size:
+        #     kcw.finish()
 
-            # draw rectangles (on small)
-            for (x, y, w, h) in rects:
-                cv2.rectangle(small, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-            if not kcw.recording:
-                timestamp = datetime.datetime.now()
-                p = "{}/{}.mp4".format(output_path,
-                                       timestamp.strftime("%Y%m%d-%H%M%S"))
-                # kcw.start(p, cv2.VideoWriter_fourcc(*'MJPG'), 30)
-                kcw.start(p, cv2.VideoWriter_fourcc(*'mp4v'), 30)
-                output_vids.append(p)
-        else:
-            update_consec_frames = True
-
-        if update_consec_frames:
-            consec_frames += 1
-        kcw.update(image)
-        if kcw.recording and consec_frames == buff_size:
-            kcw.finish()
-
-        cv2.imshow("final", small)
+        # cv2.imshow("final", small)
 
         frame_count += 1
 
