@@ -4,6 +4,9 @@ import imutils
 import matplotlib.pyplot as plt
 from keyclipwriter import KeyClipWriter
 import datetime
+import pytesseract
+
+pytesseract.pytesseract.tesseract_cmd = 'C:\Program Files\Tesseract-OCR\\tesseract.exe'
 
 
 def make_cuts(filename, output_path, buff_size=64):
@@ -16,6 +19,7 @@ def make_cuts(filename, output_path, buff_size=64):
     # fgbg = cv2.createBackgroundSubtractorMOG2()
 
     consec_frames = 0
+    motion_timestamps = []
 
     vid = cv2.VideoCapture(filename)
     is_empty = True
@@ -24,11 +28,23 @@ def make_cuts(filename, output_path, buff_size=64):
         ret, image = vid.read()
         if image is None:
             break
+
         small = imutils.resize(image, width=min(400, image.shape[1]))
-        # fgmask = fgbg.apply(image)
         (rects, weights) = hog.detectMultiScale(small, winStride=(4, 4),
                                                 padding=(8, 8), scale=1.05)
 
+        # Kill feed OCR
+        kfeed = cv2.rectangle(small, (290, 18), (399, 40), (255, 255, 0))
+        # gray = cv2.cvtColor(kfeed, cv2.COLOR_BGR2GRAY)
+        # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+        # rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+        # dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
+        # contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        #
+        # text = pytesseract.image_to_string(gray)
+        # print(text)
+
+        # recording condition
         if len(rects) > 0:
             update_consec_frames = False
             consec_frames = 0
@@ -53,17 +69,6 @@ def make_cuts(filename, output_path, buff_size=64):
         if kcw.recording and consec_frames == buff_size:
             kcw.finish()
 
-        # if len(rects) > 0 and is_empty:
-        #     motion_timestamps.append(frame_count)
-        #     is_empty = False
-        # elif len(rects) > 0 and not is_empty:
-        #     is_empty = False
-        # elif len(rects) == 0 and not is_empty:
-        #     motion_timestamps.append(frame_count)
-        #     is_empty = True
-        # else:
-        #     is_empty = True
-
         cv2.imshow("final", small)
 
         frame_count += 1
@@ -80,7 +85,5 @@ def make_cuts(filename, output_path, buff_size=64):
     return output_vids
 
 
-print(make_cuts("clips/test2.mov", "output"))
+print(make_cuts("input/valorant_clips/sheriff2.mp4", "valorant_analyzed"))
 # print(make_cuts("clips/test_cascade.mov"))
-
-# TODO clip.duration -- (frames/total_frames)*duration

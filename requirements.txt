@@ -1,0 +1,9 @@
+pydub~=0.24.1
+numpy~=1.19.5
+moviepy~=1.0.3
+librosa~=0.8.0
+matplotlib~=3.3.3
+aubio~=0.4.9
+scipy~=1.6.0
+PyAudio~=0.2.11
+setuptools~=52.0.0
